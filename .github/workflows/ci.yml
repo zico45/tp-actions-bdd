@@ -89,7 +89,7 @@ jobs:
     needs: [python, node, java, php]
     steps:
       - name: Build
-        run: echo "Build réussi : les 4 jobs de tests sont verts"
+        run: echo "Build réussi, les 4 jobs de tests sont verts"
 
   deploy:
     runs-on: ubuntu-latest
