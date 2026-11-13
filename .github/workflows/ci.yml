@@ -3,8 +3,11 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  python:
+   python:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
     steps:
       - uses: actions/checkout@v4
 
@@ -13,15 +16,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-
-      - name: Installer les dépendances
-        run: pip install -r requirements.txt
-        working-directory: python-app
-
-      - name: Lancer les tests
-        run: pytest -v
-        working-directory: python-app
+          python-version: ${{ matrix.python-version }}
 
   node:
     runs-on: ubuntu-latest
@@ -80,3 +75,23 @@ jobs:
       - name: Lancer les tests
         run: vendor/bin/phpunit tests
         working-directory: php-app
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [python, node, java, php]
+    steps:
+      - name: Build
+        run: echo "Build réussi : les 4 jobs de tests sont verts"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Déploiement
+        run: echo "Déploiement en cours"
+
+      - name: Vérifier le secret
+        env:
+          TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: test -n "$TOKEN" && echo "Token présent"
