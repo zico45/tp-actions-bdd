@@ -1,0 +1,6 @@
+{
+    "name": "tp/php-app",
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    }
+}
